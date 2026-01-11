@@ -82,14 +82,23 @@ nvm use default
 
 echo -e "${GREEN}✅ Node installed and default alias set${NC}"
 
-# Install pm2 globally under that node (as INSTALL_USER)
-echo -e "${GREEN}Installing pm2 globally (npm -g)...${NC}"
-sudo -u "$INSTALL_USER" -H bash -lc "
-export NVM_DIR=\"$NVM_DIR\"
-[ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"
-nvm use default
-npm install -g pm2@latest
-"
+# Ask whether to install pm2
+read -p "Do you want to install pm2 globally (y/n)? [y]: " INSTALL_PM2
+INSTALL_PM2="${INSTALL_PM2:-y}"
+
+if [[ "$INSTALL_PM2" =~ ^[Yy]$ ]]; then
+  echo -e "${GREEN}Installing pm2 globally (npm -g)...${NC}"
+  sudo -u "$INSTALL_USER" -H bash -lc "
+  export NVM_DIR=\"$NVM_DIR\"
+  [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"
+  nvm use default
+  npm install -g pm2@latest
+  "
+  echo -e "${GREEN}✅ pm2 installed${NC}"
+else
+  echo -e "${YELLOW}⏭ Skipping pm2 installation${NC}"
+fi
+
 
 echo -e "${GREEN}✅ pm2 installed${NC}"
 
@@ -138,7 +147,7 @@ echo "    source $HOME_DIR/.bashrc"
 echo "  (or run: source ~/.profile or source ~/.bash_profile if that's what your distro uses)."
 echo ""
 echo "- If you want the installer to both run and change your current shell automatically, run this script with:"
-echo "    source ./install-nvm-node-pm2.sh"
+echo "    source ./Install-Nvm-Node-pm2.sh"
 echo "  (That will execute the script in your current shell so the final 'source' has effect.)"
 
 exit 0
